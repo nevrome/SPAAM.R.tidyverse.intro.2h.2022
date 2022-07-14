@@ -26,10 +26,14 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, 
 
 ## TOC
 
-- The working environment?
-- Loading data?
+- The working environment
+- Loading data into tibbles
+- Plotting data in tibbles
+- Conditional queries on tibbles
+- Transforming and manipulating tibbles
+- Combining tibbles with join operations
 
-# The working environment?
+# The working environment
 
 ## A crash course on R for data analysis
 
@@ -39,7 +43,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, 
 
 - The Tidyverse is ...
 
-# Loading data
+# Loading data into tibbles
 
 ## Reading data with readr
 
@@ -63,7 +67,7 @@ readr::read_lines() # read linewise to parse yourself
 
 - `readr` automatically detects column types - or your define them manually
 
-## The interface of `read_csv` work?
+## How does the interface of `read_csv` work?
 
 - We can learn more about a function with the `?` to open its help file: `?readr::read_csv`
 - `readr::read_csv` has many options to specify how to read a text file
@@ -88,50 +92,149 @@ read_csv(
 ## What does `readr` produce? The tibble!
 
 ```{r}
-my_data <- readr::read_tsv(sample_table_url)
+samples <- readr::read_tsv(sample_table_url)
 ```
 
 - The `tibble` is a "data frame", a tabular data structure with rows and columns
 - Unlike a simple array, each column can have another data type
 
 ```{r results='markup'}
-print(my_data, n = 3)
+print(samples, n = 3)
 ```
 
-## huhu
+## How to look at a tibble?
 
-```{r echo=FALSE}
-# sample_df <- readr::read_tsv(sample_table_url)
-# library_df <- readr::read_tsv(library_table_url)
-# 
-# sample_df$project_name %>% unique %>% length
-# library_df$project_name %>% unique %>% length
-# 
-# colnames(sample_df)
-# purrr::map(sample_df, class)
-# 
-# dim(sample_df)
-# 
-# head(sample_df)
-# tail(sample_df)
-# 
-# sample_df %>%
-#   dplyr::slice_sample(n = 5)
-# 
-# sample_df[9,]
-# sample_df[c(10,12),]
-# 
-# sample_df[9:12, 0:4]
-# 
-# sample_df["site_name"]
-# sample_df[["site_name"]]
-# sample_df$site_name
-# 
-# sample_df[-1,]
-# sample_df[,-1]
-# 
-# is.na(sample_df)
-# sum(sample_df[,2], na.rm = T)
-# 
-# summary(sample_df)
+```{r, eval=FALSE}
+samples          # Typing the name of an object will print it to the console
+str(samples)     # A structural overview of an object
+summary(samples) # A human-readable summary of an object
+View(samples)    # RStudio's interactive data browser
 ```
+
+- R provides a very flexible indexing operation
+
+```{r, eval=FALSE}
+samples[1,1]                         # Access the first row and column
+samples[1,]                          # Access the first row
+samples[,1]                          # Access the first column
+samples[c(1,2,3),c(2,3,4)]           # Access a selection of rows and columns
+samples[,-c(1,2)]                    # Remove the first two columns
+samples[,c("site_name", "material")] # Columns can be selected by name
+```
+
+- tibbles are mutable data structures, so their content can be overwritten
+
+```{r, eval=FALSE}
+samples[1,1] <- "Cheesecake2015"
+```
+
+# Plotting data in tibbles
+
+## ggplot2 and the "grammar of graphics"
+
+## Scatterplots
+
+geom_point
+
+## Boxplots
+
+geom_boxplot
+
+## Barcharts
+
+geom_bar
+
+## Plot matrizes
+
+facet_wrap
+facet_grid
+
+## Exercise 1
+
+# Conditional queries on tibbles
+
+## Filter rows and select columns
+
+dplyr::filter
+dplyr::select
+
+## The pipe
+
+## Summary statistics
+
+nrow
+length
+unique
+mean
+median
+var
+
+## Group-wise summaries
+
+dplyr::group_by
+dplyr::summarise
+dplyr::n()
+
+## Sorting tibbles
+
+dplyr::arrange()
+
+## Exercise 2
+
+# Transforming and manipulating tibbles
+
+## Renaming columns
+
+dplyr::rename
+
+## Adding columns to tibbles
+
+dplyr::mutate
+dplyr::transmute
+tibble::add_column
+
+## Conditional operations
+
+dplyr::case_when
+
+## Splitting and unifying columns
+
+tidyr::separate
+tidyr::unite
+
+## Long and wide data formats
+
+tidyr::pivot_wider
+tidyr::pivot_longer
+
+## Exercise 3
+
+# Combining tibbles with join operations
+
+## Types of joins
+
+## Left join
+
+dplyr::left_join
+
+## Right join
+
+dplyr::right_join
+
+## Inner join
+
+dplyr::inner_join
+
+## Full join
+
+dplyr::full_join
+
+## Semi join
+
+dplyr::semi_join
+
+## Anti join
+
+dplyr::anti_join
+
+## Exercise 4
