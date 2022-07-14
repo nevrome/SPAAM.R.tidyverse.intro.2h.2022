@@ -1,0 +1,89 @@
+\mode<presentation>
+
+% General
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow = true]  
+
+% Slide background
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+  % Title page
+  \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \ifnum\thepage=1\relax
+    \node[inner sep=0pt] (whitehead) at (5,7){
+      \includegraphics[height = .35\textheight]{logo/SPAAM-Logo-Full-Colour_ShortName.png}
+    };
+  \fi
+  % Non title page
+  \ifnum\thepage>1\relax
+    % nothing here
+  \fi
+  \node[inner sep=0pt] (whitehead) at (1,0.5){
+    \includegraphics[height = 0.07\textheight]{logo/WSS-SPAAM-summerschool_logo_name.png}
+  };
+  \end{tikzpicture}
+}
+
+% Header
+\setbeamertemplate{headline}[text line]{
+  \ifnum\thepage>1\relax
+  \parbox{\linewidth}{
+    \vspace*{0.3cm}
+    \hspace*{\fill}\usebeamerfont{headline}
+    SPAAM Summer School: A crash course on R for data analysis | 2022 | Clemens Schmid | CC BY 4.0
+    \hspace*{\fill}
+  }
+  \fi
+}
+
+% Footer
+\setbeamertemplate{footline}[text line]{
+  \ifnum\thepage>1\relax
+    \parbox{\linewidth}{\vspace*{-15pt}\hfill\usebeamercolor[fg]{pagenumber}\usebeamerfont{pagenumber}\insertpagenumber\hspace*{-20pt}}
+  \fi
+}
+
+% Title page
+\defbeamertemplate*{title page}{spaam}[1][]{ 
+  \vfill
+  \begin{columns}
+    \column{1\linewidth}
+      \vskip3cm
+      \begin{beamercolorbox}[wd=16cm,center,sep=8pt]{title page header}
+        \usebeamerfont{title}\inserttitle\par
+      \end{beamercolorbox}
+      \vskip0.3cm
+      \begin{beamercolorbox}[wd=16cm,center]{author}
+        \usebeamerfont{author}\insertauthor
+      \end{beamercolorbox}
+  \end{columns}
+  % \vskip0.2cm%
+  %\begin{beamercolorbox}[wd=12cm,center,#1]{date}
+  %  \usebeamerfont{author}\insertdate%
+  %\end{beamercolorbox}
+  \vfill
+}
+
+% Items
+\setbeamertemplate{items}[square]
+
+% TOC
+\setbeamertemplate{section in toc}{
+  \inserttocsectionnumber. \inserttocsection
+}
+
+% Inter section slides
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{sectiontitle}
+    \usebeamerfont{sectiontitle}\secname\par
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\mode
+<all>
+
