@@ -21,7 +21,10 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, warning = FALSE, message = FALSE,
+  fig.align = "center", out.width = "60%", fig.dim = c(7, 5)
+)
 ```
 
 ## TOC
@@ -35,13 +38,14 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, 
 
 # The working environment
 
-## A crash course on R for data analysis
+## R, RStudio and the tidyverse
 
-- R is a fully featured programming language, but it excels as an environment for (statistical) data analysis
+- R is a fully featured programming language, but it excels as an environment for (statistical) data analysis (https://www.r-project.org)
 
-- RStudio ...
+- RStudio is an integrated development environment (IDE) for R (and other languages): (https://www.rstudio.com/products/rstudio)
 
-- The Tidyverse is ...
+- The tidyverse is a collection of packages with well-designed and consistent interfaces for the main steps of data analysis: loading, transforming and plotting data (https://www.tidyverse.org)
+  - This introduction works with: `readr`, `tibble`, `ggplot2`, `dplyr` and `tidyr`
 
 # Loading data into tibbles
 
@@ -125,24 +129,78 @@ samples[,c("site_name", "material")] # Columns can be selected by name
 - tibbles are mutable data structures, so their content can be overwritten
 
 ```{r, eval=FALSE}
-samples[1,1] <- "Cheesecake2015"
+samples[1,1] <- "Cheesecake2015"     # replace the first value in the first column 
 ```
 
 # Plotting data in tibbles
 
 ## ggplot2 and the "grammar of graphics"
 
-## Scatterplots
+- `ggplot2` offers an unusual, but powerful and logical interface
+- The following example describes a stacked bar chart
 
-geom_point
+```{r}
+library(ggplot2)
+```
 
-## Boxplots
+```{r eval=FALSE}
+ggplot(          # Every plot starts with a call to the ggplot() function
+  data = samples # This function can also take the input tibble
+) +              # The plot consists of functions linked with +
+geom_bar(        # "geoms" define the plot layers we want to draw
+  mapping = aes( # The aes() function maps variables to visual properties
+    x = publication_year, # publication_year -> x-axis
+    fill = community_type # publication_year -> fill color
+  )
+)
+```
 
-geom_boxplot
+- `geom_*`: data + geometry + statistical transformation + repositioning
 
-## Barcharts
+## ggplot2 and the "grammar of graphics"
 
-geom_bar
+```{r}
+ggplot(samples) +
+geom_bar(aes(x = publication_year, fill = community_type))
+```
+
+## ggplot2 features many geoms
+
+\centering
+![](figures/geom_cheatsheet.png){width=64%}
+
+## Scales
+
+```{r}
+ggplot(samples) +
+geom_jitter(aes(x = publication_year, y = sample_age))
+```
+
+## Scales
+
+```{r}
+ggplot(samples) +
+geom_jitter(aes(x = publication_year, y = sample_age)) +
+scale_y_log10()
+```
+
+## Scales
+
+```{r}
+ggplot(samples) +
+geom_jitter(aes(x = publication_year, y = sample_age, color = material)) +
+scale_y_log10()
+```
+
+## Scales
+
+```{r}
+ggplot(samples) +
+geom_jitter(aes(x = publication_year, y = sample_age, color = material)) +
+scale_y_log10() + scale_color_manual(values = c("dental calculus" = "red"))
+```
+
+## Coords
 
 ## Plot matrizes
 
