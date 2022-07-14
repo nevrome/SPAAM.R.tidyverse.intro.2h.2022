@@ -21,35 +21,86 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, warning = FALSE, message = FALSE)
 ```
 
-##
+## TOC
 
-<!-- \LARGE -->
+- The working environment?
+- Loading data?
 
-<!-- \begin{figure} -->
-<!--   \centering -->
-<!--   \includegraphics[height=4cm]{figures/niels_bach_pyre} -->
-<!--   \caption*{\tiny \textcopyright \ Niels Bach - http://nielsbach.blogspot.com} -->
-<!-- \end{figure} -->
-
-- ...
-
-# huhu
+# The working environment?
 
 ## A crash course on R for data analysis
 
-- R is a fully featured programming language, but it excels as an environment for (statistical) data analysis. That's the aspect we will be focussing on today.
+- R is a fully featured programming language, but it excels as an environment for (statistical) data analysis
 
-- If 
+- RStudio ...
 
-```{r cars}
-library(magrittr)
+- The Tidyverse is ...
 
+# Loading data
+
+## Reading data with readr
+
+```{r echo = FALSE}
 sample_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/samples/ancientmetagenome-hostassociated_samples.tsv"
 library_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/libraries/ancientmetagenome-hostassociated_libraries.tsv"
+```
 
+- With R we usually operate on data in our computer's memory
+- The tidyverse provides the package `readr` to read data from text files into the memory
+- `readr` can read from our file system or the internet
+- It provides functions to read data in almost any (text) format:
+
+```{r eval=FALSE}
+readr::read_csv()   # .csv files
+readr::read_tsv()   # .tsv files
+readr::read_delim() # tabular files with an arbitrary separator
+readr::read_fwf()   # fixed width files
+readr::read_lines() # read linewise to parse yourself 
+```
+
+- `readr` automatically detects column types - or your define them manually
+
+## The interface of `read_csv` work?
+
+- We can learn more about a function with the `?` to open its help file: `?readr::read_csv`
+- `readr::read_csv` has many options to specify how to read a text file
+
+```{r eval=FALSE}
+read_csv(
+  file,                      # The path to the file we want to read
+  col_names = TRUE,          # Are there column names?
+  col_types = NULL,          # Which types do the columns have? NULL -> auto
+  locale = default_locale(), # How is information encoded in this file?
+  na = c("", "NA"),          # Which values mean "no data"
+  trim_ws = TRUE,            # Should superfluous white-spaces be removed?
+  skip = 0,                  # Skip X lines at the beginning of the file
+  n_max = Inf,               # Only read X lines
+  skip_empty_rows = TRUE,    # Should empty lines be ignored? 
+  comment = "",              # Should comment lines be ignored?
+  name_repair = "unique",    # How should "broken" column names be fixed
+  ...
+)
+```
+
+## What does `readr` produce? The tibble!
+
+```{r}
+my_data <- readr::read_tsv(sample_table_url)
+```
+
+- The `tibble` is a "data frame", a tabular data structure with rows and columns
+- Unlike a simple array, each column can have another data type
+
+```{r results='markup'}
+print(my_data, n = 3)
+```
+
+## huhu
+
+```{r echo=FALSE}
 # sample_df <- readr::read_tsv(sample_table_url)
 # library_df <- readr::read_tsv(library_table_url)
 # 
