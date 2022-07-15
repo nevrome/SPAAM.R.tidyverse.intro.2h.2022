@@ -205,7 +205,7 @@ geom_boxplot(aes(x = as.factor(publication_year), y = sample_age,
 scale_y_log10() + scale_fill_viridis_d(option = "C")
 ```
 
-## Plot matrizes
+## Plot matrices
 
 - Splitting up the plot by categories into **facets** is another way to visualize more variables at once
 
@@ -232,21 +232,75 @@ theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 
 # Conditional queries on tibbles
 
-## Filter rows and select columns
+## Selecting columns and filtering rows
 
-dplyr::filter
-dplyr::select
+- The `dplyr` package includes powerful functions to subset data in tibbles based on conditions
+- `dplyr::select` allows to select columns
 
-## The pipe
+```{r}
+dplyr::select(samples, project_name, sample_age)   # reduce to two columns
+dplyr::select(samples, -project_name, -sample_age) # remove two columns 
+```
+
+- `dplyr::filter` allows for conditional filtering of rows
+
+```{r}
+dplyr::filter(samples, publication_year == 2014)  # samples published in 2014
+dplyr::filter(samples, publication_year == 2014 |
+                       publication_year == 2018)  # samples from 2015 OR 2018
+dplyr::filter(samples, publication_year %in% c(2014, 2018)) # match operator: %in%
+dplyr::filter(samples, sample_host == "Homo sapiens" & 
+                       community_type == "oral")  # Oral samples from modern humans
+```
+
+
+## Chaining functions together
+
+- The pipe `%>%` in the `magrittr` package is a clever infix operator to chain data and operations
+
+```{r}
+samples %>% dplyr::filter(publication_year == 2014)
+```
+
+- It *pipes* the LHS *in* as the first argument of the function appearing on the RHS
+- That allows for sequences of functions ("tidyverse style")
+
+```{r}
+samples %>%
+  dplyr::select(sample_host, community_type) %>%
+  dplyr::filter(sample_host == "Homo sapiens" & community_type == "oral") %>%
+  nrow() # count the incidences
+```
+
+- `magrittr` also offers some more operators, among which the extraction `%$%` is particularly useful
+
+```{r}
+samples %>%
+  dplyr::filter(material == "tooth") %$%
+  sample_age %>% # extract the sample_age column as a vector
+  max()          # get the maximum of said vector
+```
 
 ## Summary statistics
 
-nrow
-length
-unique
-mean
-median
-var
+- Summarising and counting data is indispensable and R offers all operations you would expect in its `base` package
+
+```{r}
+nrow(samples)              # number of rows in a tibble
+length(samples$site_name)  # length/size of a vector
+unique(samples$material)   # unique elements of a vector
+
+min(samples$sample_age)    # minimum
+max(samples$sample_age)    # maximum
+
+mean(samples$sample_age)   # mean
+median(samples$sample_age) # median
+
+var(samples$sample_age)    # variance
+sd(samples$sample_age)     # standard deviation
+
+quantile(samples$sample_age, probs = 0.75) # sample quantiles for the given probs
+```
 
 ## Group-wise summaries
 
