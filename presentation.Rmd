@@ -424,6 +424,8 @@ tidyr::unite
 
 ## Long and wide data formats
 
+![](figures/pivot_longer_wider.png){height=80px}
+
 tidyr::pivot_wider
 tidyr::pivot_longer
 
