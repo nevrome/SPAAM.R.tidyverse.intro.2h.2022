@@ -435,25 +435,35 @@ tidyr::pivot_longer
 
 ## Left join
 
-dplyr::left_join
+![](figures/left_join.png){height=80px}
 
 ## Right join
+
+![](figures/right_join.png){height=80px}
 
 dplyr::right_join
 
 ## Inner join
 
+![](figures/inner_join.png){height=80px}
+
 dplyr::inner_join
 
 ## Full join
+
+![](figures/full_join.png){height=80px}
 
 dplyr::full_join
 
 ## Semi join
 
+![](figures/semi_join.png){height=80px}
+
 dplyr::semi_join
 
 ## Anti join
+
+![](figures/anti_join.png){height=80px}
 
 dplyr::anti_join
 
