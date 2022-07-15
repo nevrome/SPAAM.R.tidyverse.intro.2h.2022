@@ -22,8 +22,8 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
 knitr::opts_chunk$set(
-  echo = TRUE, eval = TRUE, cache = FALSE, results = FALSE, warning = FALSE, message = FALSE,
-  fig.align = "center", out.width = "60%", fig.dim = c(7, 5)
+  echo = TRUE, eval = TRUE, cache = TRUE, results = FALSE, warning = FALSE, message = FALSE,
+  fig.align = "center", out.width = "60%", fig.dim = c(7, 4)
 )
 ```
 
@@ -159,6 +159,8 @@ geom_bar(        # "geoms" define the plot layers we want to draw
 
 ## ggplot2 and the "grammar of graphics"
 
+- This is the plot described above: number of samples per community type through time
+
 ```{r}
 ggplot(samples) +
 geom_bar(aes(x = publication_year, fill = community_type))
@@ -171,41 +173,60 @@ geom_bar(aes(x = publication_year, fill = community_type))
 
 ## Scales
 
+- Another plot: Boxplots of sample age through time
+
 ```{r}
 ggplot(samples) +
-geom_jitter(aes(x = publication_year, y = sample_age))
+geom_boxplot(aes(x = as.factor(publication_year), y = sample_age))
 ```
+
+- This is not well readable, because extreme outliers dictate the scale
 
 ## Scales
 
+- We can change the **scale** of different visual elements - e.g. the y-axis
+
 ```{r}
 ggplot(samples) +
-geom_jitter(aes(x = publication_year, y = sample_age)) +
+geom_boxplot(aes(x = as.factor(publication_year), y = sample_age)) +
 scale_y_log10()
 ```
 
-## Scales
-
-```{r}
-ggplot(samples) +
-geom_jitter(aes(x = publication_year, y = sample_age, color = material)) +
-scale_y_log10()
-```
+- The log-scale improves readability
 
 ## Scales
 
+- (Fill) color is a visual element of the plot and its scaling can be adjusted
+
 ```{r}
 ggplot(samples) +
-geom_jitter(aes(x = publication_year, y = sample_age, color = material)) +
-scale_y_log10() + scale_color_manual(values = c("dental calculus" = "red"))
+geom_boxplot(aes(x = as.factor(publication_year), y = sample_age,
+                 fill = as.factor(publication_year))) +
+scale_y_log10() + scale_fill_viridis_d(option = "C")
 ```
-
-## Coords
 
 ## Plot matrizes
 
-facet_wrap
-facet_grid
+- Splitting up the plot by categories into **facets** is another way to visualize more variables at once
+
+```{r}
+ggplot(samples) +
+geom_count(aes(x = as.factor(publication_year), y = material)) +
+facet_wrap(~archive)
+```
+
+- Unfortunately the x-axis became unreadable
+
+## Purely aesthetic settings
+
+- Aesthetic changes like this can be applied as part of the `theme`
+
+```{r}
+ggplot(samples) +
+geom_count(aes(x = as.factor(publication_year), y = material)) +
+facet_wrap(~archive) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+```
 
 ## Exercise 1
 
