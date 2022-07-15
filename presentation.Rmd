@@ -304,13 +304,56 @@ quantile(samples$sample_age, probs = 0.75) # sample quantiles for the given prob
 
 ## Group-wise summaries
 
-dplyr::group_by
-dplyr::summarise
-dplyr::n()
+- These summary statistics are particular useful when applied to conditional subsets of a dataset
+- `dplyr` allows such summary operations with a combination of `group_by` and `summarise`
 
-## Sorting tibbles
+```{r}
+samples %>%
+  dplyr::group_by(material) %>%  # group the tibble by the material column
+  dplyr::summarise(
+    min_age = min(sample_age),   # a new column: min age for each group
+    median_age = median(sample_age), # a new column: median age for each group
+    max_age = max(sample_age)    # a new column: max age for each group
+  )
+```
 
-dplyr::arrange()
+- grouping can be applied across multiple columns
+
+```{r}
+samples %>%
+  dplyr::group_by(material, sample_host) %>% # group by material and host
+  dplyr::summarise(
+    n = dplyr::n(),  # a new column: number of samples for each group
+    .groups = "drop" # drop the grouping after this summary operation
+  )
+```
+
+## Sorting and slicing tibbles
+
+- `dplyr` allows to `arrange` tibbles by one or multiple columns
+
+```{r}
+samples %>% dplyr::arrange(publication_year)        # sort by publication year
+samples %>% dplyr::arrange(publication_year,
+                           sample_age)              # ... and sample age
+samples %>% dplyr::arrange(dplyr::desc(sample_age)) # sort descending on sample age
+```
+
+- Sorting also works within groups and can be paired with `slice` to extract extreme values per group
+
+```{r}
+samples %>%
+  dplyr::group_by(publication_year) %>%       # group by publication year
+  dplyr::arrange(dplyr::desc(sample_age)) %>% # sort by age within (!) groups
+  dplyr::slice_head(n = 2) %>%                # keep the first two samples per group
+  dplyr::ungroup()                            # remove the still lingering grouping
+```
+
+- Slicing is also the relevant operation to take random samples from the observations in a tibble
+
+```{r}
+samples %>% dplyr::slice_sample(n = 20)
+```
 
 ## Exercise 2
 
