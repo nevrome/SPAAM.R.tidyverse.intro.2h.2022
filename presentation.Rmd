@@ -298,9 +298,10 @@ median(samples$sample_age) # median
 
 var(samples$sample_age)    # variance
 sd(samples$sample_age)     # standard deviation
-
 quantile(samples$sample_age, probs = 0.75) # sample quantiles for the given probs
 ```
+
+- many of these functions can ignore missing values with an option `na.rm = TRUE`
 
 ## Group-wise summaries
 
@@ -359,15 +360,58 @@ samples %>% dplyr::slice_sample(n = 20)
 
 # Transforming and manipulating tibbles
 
-## Renaming columns
+## Renaming and reordering columns and values
 
-dplyr::rename
+- Columns in tibbles can be renamed with `dplyr::rename` and reordered with `dplyr::relocate`
+
+```{r}
+samples %>% dplyr::rename(country = geo_loc_name) # rename a column
+samples %>% dplyr::relocate(site_name, .before = project_name) # reorder columns
+```
+
+- Values in columns can also be changed with `dplyr::recode`
+
+```{r}
+samples$sample_host %>% dplyr::recode(`Homo sapiens` = "modern human")
+```
+
+- R supports explicitly ordinal data with `factor`s, which can be reordered as well
+- `factor`s can be handeld more easily with the `forcats` package
+
+```{r, fig.show='hide'}
+ggplot(samples) + geom_bar(aes(x = community_type)) # bars are alphabetically ordered
+sa2 <- samples
+sa2$cto <- forcats::fct_reorder(sa2$community_type, sa2$community_type, length)
+# fct_reorder: reorder the input factor by a summary statistic on an other vector
+ggplot(sa2) + geom_bar(aes(x = community_type)) # bars are ordered by size
+```
 
 ## Adding columns to tibbles
 
-dplyr::mutate
-dplyr::transmute
-tibble::add_column
+- A common application of data manipulation is adding derived columns. `dplyr` offers that with `mutate`
+
+```{r}
+samples %>% 
+  dplyr::mutate(                                               # add a column that
+    archive_summary = paste0(archive, ": ", archive_accession) # combines two other
+  ) %$% archive_summary                                        # columns
+```
+
+- `dplyr::transmute` removes all columns but the newly created ones
+
+```{r}
+samples %>% 
+  dplyr::transmute(
+    sample_name = tolower(sample_name), # overwrite this columns
+    publication_doi                     # select this column
+)
+```
+
+- `tibble::add_column` behaves as `dplyr::mutate`, but gives more control over column position
+
+```{r}
+samples %>% tibble::add_column(., id = 1:nrow(.), .before = "project_name")
+```
 
 ## Conditional operations
 
