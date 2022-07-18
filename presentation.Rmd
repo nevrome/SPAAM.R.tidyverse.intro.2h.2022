@@ -53,7 +53,6 @@ knitr::opts_chunk$set(
 
 ```{r echo = FALSE}
 sample_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/samples/ancientmetagenome-hostassociated_samples.tsv"
-library_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/libraries/ancientmetagenome-hostassociated_libraries.tsv"
 ```
 
 - With R we usually operate on data in our computer's memory
@@ -504,38 +503,96 @@ carsales_wide
 
 ## Types of joins
 
+...
+
+## A second dataset
+
+```{r echo=FALSE}
+library_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/libraries/ancientmetagenome-hostassociated_libraries.tsv"
+```
+
+```{r, results='markup'}
+libraries <- readr::read_tsv(library_table_url)
+print(libraries, n = 3)
+```
+
+## Meaningful subsets
+
+```{r echo=FALSE}
+samsub <- samples %>% dplyr::select(project_name, sample_name, sample_age)
+libsub <- libraries %>% dplyr::select(project_name, sample_name, library_name, read_count)
+```
+
 ## Left join
 
 ![](figures/left_join.png){height=80px}
+
+```{r}
+left <- dplyr::left_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Right join
 
 ![](figures/right_join.png){height=80px}
 
-dplyr::right_join
+```{r}
+right <- dplyr::right_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Inner join
 
 ![](figures/inner_join.png){height=80px}
 
-dplyr::inner_join
+```{r}
+inner <- dplyr::inner_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Full join
 
 ![](figures/full_join.png){height=80px}
 
-dplyr::full_join
+```{r}
+full <- dplyr::full_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Semi join
 
 ![](figures/semi_join.png){height=80px}
 
-dplyr::semi_join
+```{r}
+semi <- dplyr::semi_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Anti join
 
 ![](figures/anti_join.png){height=80px}
 
-dplyr::anti_join
+```{r}
+anti <- dplyr::anti_join(
+  x = samsub,
+  y = libsub,
+  by = c("project_name", "sample_name")
+)
+```
 
 ## Exercise 4
