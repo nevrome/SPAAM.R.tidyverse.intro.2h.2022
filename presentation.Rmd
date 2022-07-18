@@ -440,19 +440,63 @@ samples %>% dplyr::mutate(
 ) %$% hemi
 ```
 
-<!--
-## Splitting and unifying columns
-
-tidyr::separate
-tidyr::unite
--->
-
 ## Long and wide data formats
+
+- For different applications or to simplify certain analysis or plotting operations data often has to be transformed from a **wide** to a **long** format or vice versa
 
 ![](figures/pivot_longer_wider.png){height=80px}
 
-tidyr::pivot_wider
-tidyr::pivot_longer
+- A table in **wide** format has N key columns and N value columns
+- A table in **long** format has N key columns, one descriptor column and one value column
+
+## A wide dataset
+
+```{r}
+carsales <- tibble::tribble(
+  ~brand, ~`2014`, ~`2015`, ~`2016`, ~`2017`,
+  "BMW",  20,      25,      30,      45,
+  "VW",   67,      40,     120,      55
+)
+```
+
+```{r, results="markup", echo=FALSE}
+carsales
+```
+
+- Wide format becomes a problem, when the columns are semantically identical. This dataset is in wide format and we can not easily plot it
+- We generally prefer data in long format, although it is more verbose with more duplication. "Long" format data is more "tidy"
+
+## Making a wide dataset long
+
+```{r}
+carsales_long <- carsales %>% tidyr::pivot_longer(
+  cols = tidyselect::num_range("", range = 2014:2017), # set of columns to transform
+  names_to = "year",            # the name of the descriptor column we want
+  names_transform = as.integer, # a transformation function to apply to the names
+  values_to = "sales"           # the name of the value column we want
+)
+```
+
+```{r, results="markup", echo=FALSE}
+carsales_long
+```
+
+## Making a long dataset wide
+
+```{r}
+carsales_wide <- carsales_long %>% tidyr::pivot_wider(
+  id_cols = "brand",  # the set of id columns that should not be changed
+  names_from = year,  # the descriptor column with the names of the new columns
+  values_from = sales # the value column from which the values should be extracted
+)
+```
+
+```{r, results="markup", echo=FALSE}
+carsales_wide
+```
+
+- Applications of wide datasets are adjacency matrices to represent graphs, covariance matrices or other pairwise statistics
+- When data gets big, then wide formats can be significantly more efficient (e.g. for spatial data)
 
 ## Exercise 3
 
