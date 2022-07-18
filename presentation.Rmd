@@ -259,6 +259,7 @@ dplyr::filter(samples, sample_host == "Homo sapiens" &
 - The pipe `%>%` in the `magrittr` package is a clever infix operator to chain data and operations
 
 ```{r}
+library(magrittr)
 samples %>% dplyr::filter(publication_year == 2014)
 ```
 
@@ -415,12 +416,36 @@ samples %>% tibble::add_column(., id = 1:nrow(.), .before = "project_name")
 
 ## Conditional operations
 
-dplyr::case_when
+- `ifelse` allows to implement conditional `mutate` operations, that consider information from other columns, but that gets cumbersome easily
 
+```{r}
+samples %>% dplyr::mutate(hemi = ifelse(latitude >= 0, "North", "South")) %$% hemi
+```
+
+```{r}
+samples %>% dplyr::mutate(
+  hemi = ifelse(is.na(latitude), "unknown", ifelse(latitude >= 0, "North", "South"))
+) %$% hemi
+```
+
+- `dplyr::case_when` is a much more readable solution for this application
+
+```{r}
+samples %>% dplyr::mutate(
+  hemi = dplyr::case_when(
+    latitude >= 0 ~ "North",
+    latitude < 0  ~ "South",
+    TRUE          ~ "unknown" # TRUE catches all remaining cases
+  )
+) %$% hemi
+```
+
+<!--
 ## Splitting and unifying columns
 
 tidyr::separate
 tidyr::unite
+-->
 
 ## Long and wide data formats
 
