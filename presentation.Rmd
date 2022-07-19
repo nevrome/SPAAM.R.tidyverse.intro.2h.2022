@@ -45,7 +45,10 @@ knitr::opts_chunk$set(
 - RStudio is an integrated development environment (IDE) for R (and other languages): (https://www.rstudio.com/products/rstudio)
 
 - The tidyverse is a collection of packages with well-designed and consistent interfaces for the main steps of data analysis: loading, transforming and plotting data (https://www.tidyverse.org)
-  - This introduction works with: `readr`, `tibble`, `ggplot2`, `dplyr` and `tidyr`
+  - This introduction works with tidyverse ~v1.3.0
+  - We will learn about `readr`, `tibble`, `ggplot2`, `dplyr`, `magrittr` and `tidyr`
+  - `forcats` will be briefly mentioned
+  - `purrr` and `stringr` are left out
 
 # Loading data into tibbles
 
@@ -68,11 +71,11 @@ readr::read_fwf()   # fixed width files
 readr::read_lines() # read linewise to parse yourself 
 ```
 
-- `readr` automatically detects column types - or your define them manually
+- `readr` automatically detects column types -- but you can also define them manually
 
 ## How does the interface of `read_csv` work?
 
-- We can learn more about a function with the `?` to open its help file: `?readr::read_csv`
+- We can learn more about a function with `?`. To open a help file: `?readr::read_csv`
 - `readr::read_csv` has many options to specify how to read a text file
 
 ```{r eval=FALSE}
@@ -92,7 +95,7 @@ read_csv(
 )
 ```
 
-## What does `readr` produce? The tibble!
+## What does `readr` produce? The `tibble`!
 
 ```{r}
 samples <- readr::read_tsv(sample_table_url)
@@ -105,7 +108,7 @@ samples <- readr::read_tsv(sample_table_url)
 print(samples, n = 3)
 ```
 
-## How to look at a tibble?
+## How to look at a `tibble`?
 
 ```{r, eval=FALSE}
 samples          # Typing the name of an object will print it to the console
@@ -114,7 +117,7 @@ summary(samples) # A human-readable summary of an object
 View(samples)    # RStudio's interactive data browser
 ```
 
-- R provides a very flexible indexing operation
+- R provides a very flexible indexing operation for `data.frame`s and `tibble`s
 
 ```{r, eval=FALSE}
 samples[1,1]                         # Access the first row and column
@@ -125,21 +128,21 @@ samples[,-c(1,2)]                    # Remove the first two columns
 samples[,c("site_name", "material")] # Columns can be selected by name
 ```
 
-- tibbles are mutable data structures, so their content can be overwritten
+- `tibble`s are mutable data structures, so their content can be overwritten
 
 ```{r, eval=FALSE}
 samples[1,1] <- "Cheesecake2015"     # replace the first value in the first column 
 ```
 
-# Plotting data in tibbles
+# Plotting data in `tibble`s
 
-## ggplot2 and the "grammar of graphics"
+## `ggplot2` and the "grammar of graphics"
 
 - `ggplot2` offers an unusual, but powerful and logical interface
 - The following example describes a stacked bar chart
 
 ```{r}
-library(ggplot2)
+library(ggplot2) # Loading a library to use its functions without ::
 ```
 
 ```{r eval=FALSE}
@@ -156,7 +159,7 @@ geom_bar(        # "geoms" define the plot layers we want to draw
 
 - `geom_*`: data + geometry + statistical transformation + repositioning
 
-## ggplot2 and the "grammar of graphics"
+## `ggplot2` and the "grammar of graphics"
 
 - This is the plot described above: number of samples per community type through time
 
@@ -165,12 +168,14 @@ ggplot(samples) +
 geom_bar(aes(x = publication_year, fill = community_type))
 ```
 
-## ggplot2 features many geoms
+## `ggplot2` features many geoms
 
 \centering
-![](figures/geom_cheatsheet.png){width=64%}
+![](figures/geom_cheatsheet.png){width=55%}
 
-## Scales
+- RStudio shares helpful cheatsheets for the tidyverse and beyond: https://www.rstudio.com/resources/cheatsheets
+
+## `scale`s control the behaviour of visual elements
 
 - Another plot: Boxplots of sample age through time
 
@@ -181,7 +186,7 @@ geom_boxplot(aes(x = as.factor(publication_year), y = sample_age))
 
 - This is not well readable, because extreme outliers dictate the scale
 
-## Scales
+## `scale`s control the behaviour of visual elements
 
 - We can change the **scale** of different visual elements - e.g. the y-axis
 
@@ -193,7 +198,7 @@ scale_y_log10()
 
 - The log-scale improves readability
 
-## Scales
+## `scale`s control the behaviour of visual elements
 
 - (Fill) color is a visual element of the plot and its scaling can be adjusted
 
@@ -204,7 +209,7 @@ geom_boxplot(aes(x = as.factor(publication_year), y = sample_age,
 scale_y_log10() + scale_fill_viridis_d(option = "C")
 ```
 
-## Plot matrices
+## Defining plot matrices via `facet`s
 
 - Splitting up the plot by categories into **facets** is another way to visualize more variables at once
 
@@ -216,7 +221,7 @@ facet_wrap(~archive)
 
 - Unfortunately the x-axis became unreadable
 
-## Purely aesthetic settings
+## Setting purely aesthetic settings with `theme`
 
 - Aesthetic changes like this can be applied as part of the `theme`
 
@@ -231,7 +236,7 @@ theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 
 # Conditional queries on tibbles
 
-## Selecting columns and filtering rows
+## Selecting columns and filtering rows with `select` and `filter`
 
 - The `dplyr` package includes powerful functions to subset data in tibbles based on conditions
 - `dplyr::select` allows to select columns
@@ -249,11 +254,11 @@ dplyr::filter(samples, publication_year == 2014 |
                        publication_year == 2018)  # samples from 2015 OR 2018
 dplyr::filter(samples, publication_year %in% c(2014, 2018)) # match operator: %in%
 dplyr::filter(samples, sample_host == "Homo sapiens" & 
-                       community_type == "oral")  # Oral samples from modern humans
+                       community_type == "oral")  # oral samples from modern humans
 ```
 
 
-## Chaining functions together
+## Chaining functions together with the pipe `%>%`
 
 - The pipe `%>%` in the `magrittr` package is a clever infix operator to chain data and operations
 
@@ -269,7 +274,7 @@ samples %>% dplyr::filter(publication_year == 2014)
 samples %>%
   dplyr::select(sample_host, community_type) %>%
   dplyr::filter(sample_host == "Homo sapiens" & community_type == "oral") %>%
-  nrow() # count the incidences
+  nrow() # count the rows
 ```
 
 - `magrittr` also offers some more operators, among which the extraction `%$%` is particularly useful
@@ -281,7 +286,7 @@ samples %>%
   max()          # get the maximum of said vector
 ```
 
-## Summary statistics
+## Summary statistics in `base` R
 
 - Summarising and counting data is indispensable and R offers all operations you would expect in its `base` package
 
@@ -303,7 +308,7 @@ quantile(samples$sample_age, probs = 0.75) # sample quantiles for the given prob
 
 - many of these functions can ignore missing values with an option `na.rm = TRUE`
 
-## Group-wise summaries
+## Group-wise summaries with `group_by` and `summarise`
 
 - These summary statistics are particular useful when applied to conditional subsets of a dataset
 - `dplyr` allows such summary operations with a combination of `group_by` and `summarise`
@@ -329,7 +334,7 @@ samples %>%
   )
 ```
 
-## Sorting and slicing tibbles
+## Sorting and slicing tibbles with `arrange` and `slice`
 
 - `dplyr` allows to `arrange` tibbles by one or multiple columns
 
@@ -360,7 +365,7 @@ samples %>% dplyr::slice_sample(n = 20)
 
 # Transforming and manipulating tibbles
 
-## Renaming and reordering columns and values
+## Renaming and reordering columns and values with `rename`, `relocate` and `recode`
 
 - Columns in tibbles can be renamed with `dplyr::rename` and reordered with `dplyr::relocate`
 
@@ -386,7 +391,7 @@ sa2$cto <- forcats::fct_reorder(sa2$community_type, sa2$community_type, length)
 ggplot(sa2) + geom_bar(aes(x = community_type)) # bars are ordered by size
 ```
 
-## Adding columns to tibbles
+## Adding columns to tibbles with `mutate` and `transmute`
 
 - A common application of data manipulation is adding derived columns. `dplyr` offers that with `mutate`
 
@@ -413,7 +418,7 @@ samples %>%
 samples %>% tibble::add_column(., id = 1:nrow(.), .before = "project_name")
 ```
 
-## Conditional operations
+## Conditional operations with `ifelse` and `case_when`
 
 - `ifelse` allows to implement conditional `mutate` operations, that consider information from other columns, but that gets cumbersome easily
 
@@ -465,7 +470,7 @@ carsales
 - Wide format becomes a problem, when the columns are semantically identical. This dataset is in wide format and we can not easily plot it
 - We generally prefer data in long format, although it is more verbose with more duplication. "Long" format data is more "tidy"
 
-## Making a wide dataset long
+## Making a wide dataset long with `pivot_longer`
 
 ```{r}
 carsales_long <- carsales %>% tidyr::pivot_longer(
@@ -480,7 +485,7 @@ carsales_long <- carsales %>% tidyr::pivot_longer(
 carsales_long
 ```
 
-## Making a long dataset wide
+## Making a long dataset wide with `pivot_wider`
 
 ```{r}
 carsales_wide <- carsales_long %>% tidyr::pivot_wider(
