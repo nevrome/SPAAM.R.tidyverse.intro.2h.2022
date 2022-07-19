@@ -40,5 +40,7 @@ vignettes/*.pdf
 
 # Rendered output
 *.pdf
+!presentation.pdf
 *.log
 presentation.tex
+
