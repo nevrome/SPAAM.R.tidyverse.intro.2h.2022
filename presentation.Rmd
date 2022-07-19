@@ -503,7 +503,16 @@ carsales_wide
 
 ## Types of joins
 
-...
+Joins combine two datasets x and y based on key columns
+
+- Mutating joins add columns from one dataset to the other
+  - Left join: Take observations from x and add fitting information from y
+  - Right join: Take observations from y and add fitting information from x
+  - Inner join: Join the overlapping observations from x and y
+  - Full join: Join all observations from x and y, even if information is missing
+- Filtering joins remove observations from x based on their presence in y
+  - Semi join: Keep every observation in x that is in y
+  - Anti join: Keep every observation in x that is not in y
 
 ## A second dataset
 
@@ -523,76 +532,129 @@ samsub <- samples %>% dplyr::select(project_name, sample_name, sample_age)
 libsub <- libraries %>% dplyr::select(project_name, sample_name, library_name, read_count)
 ```
 
+```{r, results='markup'}
+print(samsub, n = 3)
+print(libsub, n = 3)
+```
+
 ## Left join
 
-![](figures/left_join.png){height=80px}
+Take observations from x and add fitting information from y
+
+![](figures/left_join.png){height=70px}
 
 ```{r}
 left <- dplyr::left_join(
-  x = samsub,
-  y = libsub,
-  by = c("project_name", "sample_name")
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
+  by = c("project_name", "sample_name") # the key columns by which to join
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(left, n = 1)
+```
+
+- Left joins are the most common join operation: Add information from another dataset
 
 ## Right join
 
-![](figures/right_join.png){height=80px}
+Take observations from y and add fitting information from x
+
+![](figures/right_join.png){height=70px}
 
 ```{r}
 right <- dplyr::right_join(
-  x = samsub,
-  y = libsub,
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
   by = c("project_name", "sample_name")
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(right, n = 1)
+```
+
+- Right joins are almost identical to left joins -- only x and y have reversed roles
 
 ## Inner join
 
-![](figures/inner_join.png){height=80px}
+Join the overlapping observations from x and y
+
+![](figures/inner_join.png){height=70px}
 
 ```{r}
 inner <- dplyr::inner_join(
-  x = samsub,
-  y = libsub,
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
   by = c("project_name", "sample_name")
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(inner, n = 1)
+```
+
+- Inner joins are a fast and easy way to check, to which degree two dataset overlap
 
 ## Full join
 
-![](figures/full_join.png){height=80px}
+Join all observations from x and y, even if information is missing
+
+![](figures/full_join.png){height=70px}
 
 ```{r}
 full <- dplyr::full_join(
-  x = samsub,
-  y = libsub,
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
   by = c("project_name", "sample_name")
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(full, n = 1)
+```
+
+- Full joins allow to preserve every bit of information
 
 ## Semi join
 
-![](figures/semi_join.png){height=80px}
+Keep every observation in x that is in y
+
+![](figures/semi_join.png){height=70px}
 
 ```{r}
 semi <- dplyr::semi_join(
-  x = samsub,
-  y = libsub,
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
   by = c("project_name", "sample_name")
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(semi, n = 1)
+```
+
+- Semi joins are underused operations to filter datasets
 
 ## Anti join
 
-![](figures/anti_join.png){height=80px}
+Keep every observation in x that is not in y
+
+![](figures/anti_join.png){height=70px}
 
 ```{r}
 anti <- dplyr::anti_join(
-  x = samsub,
-  y = libsub,
+  x = samsub,                           # 1060 observations
+  y = libsub,                           # 1657 observations
   by = c("project_name", "sample_name")
 )
 ```
+
+```{r, echo=FALSE, results='markup'}
+print(anti, n = 1)
+```
+
+- Anti joins allow to quickly specify incomplete datasets and missing information
 
 ## Exercise 4
