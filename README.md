@@ -1,0 +1,1 @@
+This repository stores a 2h intro course for data analysis with R and the tidyverse.
