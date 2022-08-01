@@ -78,10 +78,6 @@ git pull
 
 ## Reading data with readr
 
-```{r echo = FALSE}
-sample_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/samples/ancientmetagenome-hostassociated_samples.tsv"
-```
-
 - With R we usually operate on data in our computer's memory
 - The tidyverse provides the package `readr` to read data from text files into the memory
 - `readr` can read from our file system or the internet
@@ -120,6 +116,10 @@ read_csv(
 ```
 
 ## What does `readr` produce? The `tibble`!
+
+```{r echo = FALSE}
+sample_table_url <- "https://raw.githubusercontent.com/SPAAM-community/AncientMetagenomeDir/b187df6ebd23dfeb42935fd5020cb615ead3f164/ancientmetagenome-hostassociated/samples/ancientmetagenome-hostassociated_samples.tsv"
+```
 
 ```{r}
 samples <- readr::read_tsv(sample_table_url)
@@ -258,6 +258,58 @@ theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 
 ## Exercise 1
 
+1. Look at the `mtcars` dataset and read up on the meaning of its variables
+
+```{r}
+
+```
+
+2. Visualize the relationship between *Gross horsepower* and *1/4 mile time*
+
+```{r}
+
+```
+
+3. Integrate the *Number of cylinders* into your plot
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Possible solutions 1
+
+1. Look at the `mtcars` dataset and read up on the meaning of its variables
+
+```{r, eval=FALSE}
+?mtcars
+```
+
+2. Visualize the relationship between *Gross horsepower* and *1/4 mile time*
+
+```{r, eval=FALSE}
+ggplot(mtcars) + geom_point(aes(x = hp, y = qsec))
+```
+
+3. Integrate the *Number of cylinders* into your plot
+
+```{r, eval=FALSE}
+ggplot(mtcars) + geom_point(aes(x = hp, y = qsec, color = as.factor(cyl)))
+```
+
 # Conditional queries on tibbles
 
 ## Selecting columns and filtering rows with `select` and `filter`
@@ -280,7 +332,6 @@ dplyr::filter(samples, publication_year %in% c(2014, 2018)) # match operator: %i
 dplyr::filter(samples, sample_host == "Homo sapiens" & 
                        community_type == "oral")  # oral samples from modern humans
 ```
-
 
 ## Chaining functions together with the pipe `%>%`
 
@@ -386,6 +437,59 @@ samples %>% dplyr::slice_sample(n = 20)
 ```
 
 ## Exercise 2
+
+1. Determine the number of cars with four *forward gears* (`gear`) in the `mtcars` dataset
+
+```{r}
+
+```
+
+2. Determine the mean *1/4 mile time* (`qsec`) per *Number of cylinders* (`cyl`) group
+
+```{r}
+
+```
+
+3. Identify the least efficient cars for both *transmission types* (`am`)
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Possible solutions 2
+
+1. Determine the number of cars with four *forward gears* (`gear`) in the `mtcars` dataset
+
+```{r, eval=FALSE}
+mtcars %>% dplyr::filter(gear == 4) %>% nrow()
+```
+
+2. Determine the mean *1/4 mile time* (`qsec`) per *Number of cylinders* (`cyl`) group
+
+```{r, eval=FALSE}
+mtcars %>% dplyr::group_by(cyl) %>% dplyr::summarise(qsec_mean = mean(qsec))
+```
+
+3. Identify the least efficient cars for both *transmission types* (`am`)
+
+```{r, eval=FALSE}
+#mtcars3 <- tibble::rownames_to_column(mtcars, var = "car") %>% tibble::as_tibble()
+mtcars %>% dplyr::group_by(am) %>% dplyr::arrange(mpg) %>% dplyr::slice_head()
+```
 
 # Transforming and manipulating tibbles
 
@@ -527,6 +631,61 @@ carsales_wide
 - When data gets big, then wide formats can be significantly more efficient (e.g. for spatial data)
 
 ## Exercise 3
+
+1. Move the column `gear` to the first position of the mtcars dataset
+
+```{r}
+
+```
+
+2. Make a new dataset `mtcars2` with the column `mpg` and an additional column `am_v`, which encodes the *transmission type* (`am`) as either `"manual"` or `"automatic"`
+
+```{r}
+
+```
+
+3. Count the number of cars per *transmission type* (`am_v`) and *number of gears* (`gear`). Then transform the result to a wide format, with one column per *transmission type*.
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Possible solutions 3
+
+1. Move the column `gear` to the first position of the mtcars dataset
+
+```{r, eval=FALSE}
+mtcars %>% dplyr::relocate(gear, .before = mpg)
+```
+
+2. Make a new dataset `mtcars2` with the column `gear` and an additional column `am_v`, which encodes the *transmission type* (`am`) as either `"manual"` or `"automatic"`
+
+```{r, eval=FALSE}
+mtcars2 <- mtcars %>% dplyr::mutate(
+  gear, am_v = dplyr::case_when(am == 0 ~ "automatic", am == 1 ~ "manual")
+)
+```
+
+3. Count the number of cars in `mtcars2` per *transmission type* (`am_v`) and *number of gears* (`gear`). Then transform the result to a wide format, with one column per *transmission type*.
+
+```{r, eval=FALSE}
+mtcars2 %>% dplyr::group_by(am_v, gear) %>% dplyr::tally() %>%
+  tidyr::pivot_wider(names_from = am_v, values_from = n)
+```
 
 # Combining tibbles with join operations
 
@@ -687,3 +846,49 @@ print(anti, n = 1)
 - Anti joins allow to quickly specify incomplete datasets and missing information
 
 ## Exercise 4
+
+Consider the following additional dataset:
+
+```{r}
+gear_opinions <- tibble::tibble(gear = c(3, 5), opinion = c("boring", "wow"))
+```
+
+1. Add my opinions about gears to the `mtcars` dataset
+
+```{r}
+
+```
+
+2. Remove all cars from the dataset for which I don't have an opinion
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Possible Solutions 4
+
+1. Add my opinions about gears to the `mtcars` dataset
+
+```{r, eval=FALSE}
+dplyr::left_join(mtcars, gear_opinions, by = "gear")
+```
+
+2. Remove all cars from the dataset for which I don't have an opinion
+
+```{r, eval=FALSE}
+dplyr::anti_join(mtcars, gear_opinions, by = "gear")
+```
