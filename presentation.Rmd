@@ -38,6 +38,30 @@ knitr::opts_chunk$set(
 
 # The working environment
 
+## Getting started for this workshop
+
+- Activate the relevant conda environment (don't forget to deactivate it later!)
+
+```
+conda activate r-python
+```
+
+- Navigate to
+
+```
+/vol/volume/3b-1-introduction-to-r-and-the-tidyverse/spaam_r_tidyverse_intro_2h
+```
+
+- Pull the latest changes in this Git repository
+
+```
+git pull
+```
+
+- Open RStudio
+- Load the project with `File > Open Project...`
+- Open this file `presentation.Rmd` in RStudio
+
 ## R, RStudio and the tidyverse
 
 - R is a fully featured programming language, but it excels as an environment for (statistical) data analysis (https://www.r-project.org)
