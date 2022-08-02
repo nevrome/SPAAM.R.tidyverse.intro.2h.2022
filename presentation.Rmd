@@ -60,7 +60,7 @@ git pull
 
 - Open RStudio
 - Load the project with `File > Open Project...`
-- Open this file `presentation.Rmd` in RStudio
+- Open the file `presentation.Rmd` in RStudio
 
 # A crash course on R for data analysis
 
